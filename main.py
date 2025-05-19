@@ -1,13 +1,12 @@
 from flask import Flask, request
-import requests
-import json
 import os
+import json
+import requests
 from danibotx_core import analizar_mensaje
 
-# Configuración del bot
-BOT_TOKEN = os.environ.get("TOKEN")
-OWNER_ID = int(os.environ.get("OWNER_ID", "0"))
-BOT_NAME = os.environ.get("BOT_NAME", "DANIBOTX")
+BOT_TOKEN = os.getenv("TOKEN")
+OWNER_ID = int(os.getenv("OWNER_ID"))
+BOT_NAME = os.getenv("BOT_NAME", "DANIBOTX")
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 app = Flask(__name__)
@@ -19,18 +18,18 @@ def enviar_mensaje(chat_id, texto):
         "text": texto,
         "parse_mode": "Markdown"
     }
-    headers = {"Content-Type": "application/json"}
-    requests.post(url, data=json.dumps(payload), headers=headers)
+    requests.post(url, json=payload)
 
-@app.route("/", methods=["POST"])
+@app.route(f'/{BOT_TOKEN}', methods=["POST"])
 def webhook():
     data = request.get_json()
-    if "message" in data and "text" in data["message"]:
+    if "message" in data:
         chat_id = data["message"]["chat"]["id"]
-        texto_usuario = data["message"]["text"]
-        respuesta = analizar_mensaje(texto_usuario)
-        enviar_mensaje(chat_id, respuesta)
-    return "ok", 200
+        texto = data["message"].get("text", "")
+        respuesta = analizar_mensaje(texto)
+        if respuesta:
+            enviar_mensaje(chat_id, respuesta)
+    return "OK", 200
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
