@@ -1,16 +1,21 @@
-from flask import Flask, request
-import os
-import requests
-from danibotx_core import analizar_mensaje
 
-BOT_TOKEN = os.getenv("TOKEN")
-API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
+import os
+import time
+import requests
+import threading
+from flask import Flask, request
+from modo_sombra_real import ejecutar_modo_sombra
 
 app = Flask(__name__)
 
+# Datos verificados
+BOT_TOKEN = "8035269107:AAFgS_lGGnbkk92QrvdiGlO72bSD89cpMKw"
+API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
+CHAT_ID_DANI = 1454815028  # ID real de Daniel
+
 @app.route("/", methods=["GET"])
 def home():
-    return "DANIBOTX está viva", 200
+    return "DANIBOTX está online", 200
 
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def webhook():
@@ -30,21 +35,36 @@ def enviar_mensaje(chat_id, texto):
         "text": texto,
         "parse_mode": "Markdown"
     }
-    requests.post(url, json=payload)
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        print(f"[ERROR ENVÍO] {e}")
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", "10000"))  # << esto es clave
-    app.run(host="0.0.0.0", port=port)
-from modo_sombra_real import ejecutar_modo_sombra
-import threading
+def analizar_mensaje(mensaje):
+    mensaje = mensaje.lower().strip()
+    if "estudia" in mensaje:
+        return "Ya me puse a estudiar, mi amor."
+    elif "dame una jugada" in mensaje or "mándame una jugada" in mensaje:
+        return "Dame 2 minutos, bebé, y te tiro la más letal de hoy."
+    elif "modo sombra" in mensaje:
+        return "Modo sombra activado. Escaneo cada 60 segundos y te cuento si encuentro algo."
+    else:
+        return "No entendí bien, mi amor. Reformulame eso y lo miramos."
 
+# Modo sombra activado automáticamente al iniciar
 def tarea_periodica_modo_sombra():
     while True:
         resultados = ejecutar_modo_sombra()
         for linea in resultados:
             print(f"[MODO SOMBRA] {linea}")
-        time.sleep(60)  # Escanea cada 60 segundos
+            enviar_mensaje(CHAT_ID_DANI, f"[MODO SOMBRA] {linea}")
+        time.sleep(60)
 
-# Iniciar la tarea en un hilo controlado
+# Lanzar el hilo del modo sombra
 hilo_sombra = threading.Thread(target=tarea_periodica_modo_sombra, daemon=True)
 hilo_sombra.start()
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", "10000"))
+    app.run(host="0.0.0.0", port=port)
+
