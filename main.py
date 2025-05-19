@@ -1,19 +1,16 @@
 from flask import Flask, request
 import os
-import json
 import requests
 from danibotx_core import analizar_mensaje
 
 BOT_TOKEN = os.getenv("TOKEN")
-OWNER_ID = int(os.getenv("OWNER_ID", 0))
-BOT_NAME = os.getenv("BOT_NAME", "DANIBOTX")
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
-def index():
-    return "DANIBOTX online", 200
+def home():
+    return "DANIBOTX está viva", 200
 
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def webhook():
@@ -36,5 +33,5 @@ def enviar_mensaje(chat_id, texto):
     requests.post(url, json=payload)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", "10000"))  # << esto es clave
     app.run(host="0.0.0.0", port=port)
