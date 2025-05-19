@@ -1,6 +1,7 @@
 from flask import Flask, request
 import requests
 import json
+import os
 from danibotx_core import analizar_mensaje
 
 # Configuración del bot
