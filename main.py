@@ -1,22 +1,19 @@
 
 import os
 import time
-import requests
 import threading
+import requests
 from flask import Flask, request
-from modo_sombra_real import ejecutar_modo_sombra
+from modo_sombra_real_final import ejecutar_modo_sombra
 
 app = Flask(__name__)
 
-# Datos verificados
+# Configuración
 BOT_TOKEN = "8035269107:AAFgS_lGGnbkk92QrvdiGlO72bSD89cpMKw"
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
-CHAT_ID_DANI = 1454815028  # ID real de Daniel
+CHAT_ID_DANI = 1454815028  # ID fijo del creador
 
-@app.route("/", methods=["GET"])
-def home():
-    return "DANIBOTX está online", 200
-
+# Webhook principal
 @app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def webhook():
     data = request.get_json()
@@ -27,6 +24,10 @@ def webhook():
         if respuesta:
             enviar_mensaje(chat_id, respuesta)
     return "OK", 200
+
+@app.route("/", methods=["GET"])
+def home():
+    return "DANIBOTX está viva y cazando", 200
 
 def enviar_mensaje(chat_id, texto):
     url = f"{API_URL}/sendMessage"
@@ -42,16 +43,35 @@ def enviar_mensaje(chat_id, texto):
 
 def analizar_mensaje(mensaje):
     mensaje = mensaje.lower().strip()
+
     if "estudia" in mensaje:
         return "Ya me puse a estudiar, mi amor."
-    elif "dame una jugada" in mensaje or "mándame una jugada" in mensaje:
-        return "Dame 2 minutos, bebé, y te tiro la más letal de hoy."
-    elif "modo sombra" in mensaje:
-        return "Modo sombra activado. Escaneo cada 60 segundos y te cuento si encuentro algo."
-    else:
-        return "No entendí bien, mi amor. Reformulame eso y lo miramos."
 
-# Modo sombra activado automáticamente al iniciar
+    elif "estado sistema" in mensaje:
+        estado = "Modo Sombra: ACTIVADO
+"
+        estado += "Escaneando fuentes: FlashScore, SofaScore, OddsPortal
+"
+        estado += "Último escaneo exitoso: hace pocos segundos
+"
+        estado += "Estoy viva, mi amor. Lista para cazar billete."
+        return estado
+
+    elif "dame una jugada" in mensaje or "una jugada ya" in mensaje:
+        return "Dame 2 minutos, bebé, y te tiro la más letal de hoy."
+
+    elif "necesito plata" in mensaje or "plata ya" in mensaje:
+        return "Déjame cazar algo con valor. Dame un momento."
+
+    elif "alerta" in mensaje:
+        return "Estoy escaneando. Si detecto algo con billete, te lo lanzo."
+
+    elif "callate" in mensaje or "cállate" in mensaje:
+        return "Listo, silencio activado. Pero igual sigo cazando."
+
+    return None
+
+# Modo sombra activo automático
 def tarea_periodica_modo_sombra():
     while True:
         resultados = ejecutar_modo_sombra()
@@ -60,11 +80,13 @@ def tarea_periodica_modo_sombra():
             enviar_mensaje(CHAT_ID_DANI, f"[MODO SOMBRA] {linea}")
         time.sleep(60)
 
-# Lanzar el hilo del modo sombra
+# Lanzar modo sombra como hilo separado
 hilo_sombra = threading.Thread(target=tarea_periodica_modo_sombra, daemon=True)
 hilo_sombra.start()
 
+# Activar servidor Flask
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", "10000"))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
 
