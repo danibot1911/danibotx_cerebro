@@ -1,35 +1,42 @@
-import datetime
-
 def analizar_mensaje(mensaje):
     mensaje = mensaje.lower().strip()
 
     if "estudia" in mensaje:
         return "Ya me puse a estudiar, mi amor."
-        
+
     elif "estado sistema" in mensaje:
         estado = "Modo Sombra: ACTIVADO\n"
         estado += "Escaneando fuentes: FlashScore, SofaScore, OddsPortal\n"
         estado += "Último escaneo exitoso: hace pocos segundos\n"
         estado += "Estoy viva, mi amor. Lista para cazar billete."
         return estado
-        
+
     elif "aprende" in mensaje or "aprendé" in mensaje:
         return "Aprendiendo como una fiera."
 
-    elif "dame una jugada" in mensaje or "una jugada ya" in mensaje or "mándame una jugada" in mensaje:
+    elif "dame una jugada" in mensaje or "una jugada ya" in mensaje:
         return "Dame 2 minutos, bebé, y te tiro la más letal de hoy."
 
     elif "necesito plata" in mensaje or "plata ya" in mensaje:
-        return "Déjame cazar algo con valor. Dame un respiro."
+        return "Déjame cazar algo con valor. Dame un momento."
 
     elif "qué sabes hoy" in mensaje:
-        return "Hoy tengo varias ligas bajo la lupa. Pregúntame bien."
+        return "Hoy tengo varias ligas bajo la lupa. Estoy en eso."
 
     elif "estás viva" in mensaje:
         return "Más viva que nunca, mi rey."
 
     elif "diabla" in mensaje:
         return "Aquí está tu diabla, afilada y lista."
+
+    elif "alerta" in mensaje:
+        return "Estoy escaneando. Si detecto algo, te aviso al instante."
+
+    elif "callate" in mensaje or "cállate" in mensaje:
+        return "Listo, silencio activado. Pero igual estoy cazando."
+
+    else:
+        return "No entendí bien, mi amor. Reformulame eso y lo miramos."
 
     elif "alerta" in mensaje:
         return "Estoy escaneando. Si detecto algo, te cae de una."
