@@ -5,22 +5,17 @@ import requests
 from danibotx_core import analizar_mensaje
 
 BOT_TOKEN = os.getenv("TOKEN")
-OWNER_ID = int(os.getenv("OWNER_ID"))
+OWNER_ID = int(os.getenv("OWNER_ID", 0))
 BOT_NAME = os.getenv("BOT_NAME", "DANIBOTX")
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 app = Flask(__name__)
 
-def enviar_mensaje(chat_id, texto):
-    url = f"{API_URL}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": texto,
-        "parse_mode": "Markdown"
-    }
-    requests.post(url, json=payload)
+@app.route("/", methods=["GET"])
+def index():
+    return "DANIBOTX online", 200
 
-@app.route(f'/{BOT_TOKEN}', methods=["POST"])
+@app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def webhook():
     data = request.get_json()
     if "message" in data:
@@ -31,6 +26,15 @@ def webhook():
             enviar_mensaje(chat_id, respuesta)
     return "OK", 200
 
+def enviar_mensaje(chat_id, texto):
+    url = f"{API_URL}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": texto,
+        "parse_mode": "Markdown"
+    }
+    requests.post(url, json=payload)
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
