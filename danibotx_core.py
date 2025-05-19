@@ -1,7 +1,7 @@
 import datetime
 
-def analizar_mensaje(mensaje):
-    mensaje = mensaje.lower().strip()
+elif "dame una jugada" in mensaje or "una jugada ya" in mensaje or "mándame una jugada" in mensaje:
+    return "Dame 2 minutos, bebé, y te tiro la más letal de hoy."
 
     if "estudia" in mensaje:
         return "Ya me puse a estudiar, mi amor. Revisando partidos ocultos y buscando dónde está el billete."
