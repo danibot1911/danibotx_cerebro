@@ -4,9 +4,9 @@ import json
 import os
 from danibotx_core import analizar_mensaje
 
-# Configuración del bot
-BOT_TOKEN = "8035269107:AAFgS_lGGnbkk92Qr vdiGl072"  # Usa tu token real aquí
-OWNER_ID = 1454815028
+BOT_TOKEN = os.environ.get("TOKEN")
+OWNER_ID = os.environ.get("OWNER_ID")
+BOT_NAME = os.environ.get("BOT_NAME")
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 app = Flask(__name__)
@@ -18,22 +18,18 @@ def enviar_mensaje(chat_id, texto):
         "text": texto,
         "parse_mode": "Markdown"
     }
-    headers = {"Content-Type": "application/json"}
-    requests.post(url, data=json.dumps(payload), headers=headers)
+    requests.post(url, json=payload)
 
-@app.route(f"/bot{BOT_TOKEN}", methods=["POST"])
-def recibir_actualizacion():
-    data = request.get_json()
+@app.route("/", methods=["POST"])
+def recibir_mensaje():
+    data = request.json
     if "message" in data:
         chat_id = data["message"]["chat"]["id"]
-        texto = data["message"].get("text", "")
+        texto = data["message"]["text"]
         respuesta = analizar_mensaje(texto)
         enviar_mensaje(chat_id, respuesta)
     return {"ok": True}
 
-@app.route("/", methods=["GET"])
-def index():
-    return "DANIBOTX encendida y cazando billete."
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
