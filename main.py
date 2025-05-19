@@ -35,4 +35,16 @@ def enviar_mensaje(chat_id, texto):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "10000"))  # << esto es clave
     app.run(host="0.0.0.0", port=port)
+from modo_sombra_real import ejecutar_modo_sombra
+import threading
 
+def tarea_periodica_modo_sombra():
+    while True:
+        resultados = ejecutar_modo_sombra()
+        for linea in resultados:
+            print(f"[MODO SOMBRA] {linea}")
+        time.sleep(60)  # Escanea cada 60 segundos
+
+# Iniciar la tarea en un hilo controlado
+hilo_sombra = threading.Thread(target=tarea_periodica_modo_sombra, daemon=True)
+hilo_sombra.start()
