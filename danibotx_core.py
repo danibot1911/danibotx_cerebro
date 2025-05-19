@@ -5,7 +5,12 @@ def analizar_mensaje(mensaje):
 
     if "estudia" in mensaje:
         return "Ya me puse a estudiar, mi amor."
-
+    elif "estado sistema" in texto.lower():
+    estado = "Modo Sombra: ACTIVADO\n"
+    estado += "Escaneando fuentes: FlashScore, SofaScore, OddsPortal\n"
+    estado += "Último escaneo exitoso: hace pocos segundos.\n"
+    estado += "Estoy viva, mi amor. Lista para cazar billete."
+    return estado
     elif "aprende" in mensaje or "aprendé" in mensaje:
         return "Aprendiendo como una fiera."
 
