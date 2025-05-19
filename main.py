@@ -33,3 +33,6 @@ def recibir_actualizacion():
 @app.route("/", methods=["GET"])
 def index():
     return "DANIBOTX encendida y cazando billete."
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
