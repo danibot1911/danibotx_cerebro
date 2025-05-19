@@ -17,7 +17,7 @@ def extraer_de_flashscore():
     except Exception as e:
         return [f"[FLASH ERROR] {str(e)}"]
 
-def extraer_de_sofas |oai:code-citation|
+def def extraer_de_sofascore():
 def extraer_de_sofascore():
     try:
         url = "https://www.sofascore.com/"
