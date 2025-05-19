@@ -36,4 +36,5 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "10000"))  # << esto es clave
     app.run(host="0.0.0.0", port=port)
 from modo_sombra_real import iniciar_modo_sombra
+print(">>> Activando modo sombra desde main.py...")
 iniciar_modo_sombra()
