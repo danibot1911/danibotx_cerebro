@@ -1,3 +1,4 @@
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -5,24 +6,23 @@ def extraer_de_flashscore():
     try:
         url = "https://www.flashscore.com/"
         headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         soup = BeautifulSoup(response.text, "html.parser")
 
         partidos = []
-        for match in soup.select(".event__match"):
+        for match in soup.select(".event__match--live"):
             texto = match.get_text(strip=True)
             if texto:
                 partidos.append(f"[FLASH] {texto}")
-        return partidos or ["[FLASH] No hay partidos en vivo."]
+        return partidos or ["[FLASH] No hay partidos activos."]
     except Exception as e:
         return [f"[FLASH ERROR] {str(e)}"]
 
-def def extraer_de_sofascore():
 def extraer_de_sofascore():
     try:
         url = "https://www.sofascore.com/"
         headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         soup = BeautifulSoup(response.text, "html.parser")
 
         partidos = []
@@ -30,7 +30,7 @@ def extraer_de_sofascore():
             texto = div.text.strip()
             if texto:
                 partidos.append(f"[SOFA] {texto}")
-        return partidos or ["[SOFA] No se detectaron partidos."]
+        return partidos or ["[SOFA] No hay partidos activos."]
     except Exception as e:
         return [f"[SOFA ERROR] {str(e)}"]
 
@@ -38,7 +38,7 @@ def extraer_de_oddsportal():
     try:
         url = "https://www.oddsportal.com/matches/"
         headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         soup = BeautifulSoup(response.text, "html.parser")
 
         partidos = []
@@ -46,7 +46,7 @@ def extraer_de_oddsportal():
             texto = match.text.strip()
             if texto:
                 partidos.append(f"[ODDS] {texto}")
-        return partidos or ["[ODDS] No se encontraron partidos."]
+        return partidos or ["[ODDS] No hay partidos activos."]
     except Exception as e:
         return [f"[ODDS ERROR] {str(e)}"]
 
@@ -56,3 +56,4 @@ def ejecutar_modo_sombra():
     resultados += extraer_de_sofascore()
     resultados += extraer_de_oddsportal()
     return resultados
+
