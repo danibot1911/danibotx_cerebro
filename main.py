@@ -1,3 +1,4 @@
+
 import os
 import requests
 import threading
@@ -5,12 +6,11 @@ import time
 from flask import Flask, request
 from modo_sombra_real_final import ejecutar_modo_sombra
 
-# TOKEN E ID REALES
+app = Flask(__name__)
+
 BOT_TOKEN = "8035269107:AAFgS_lGGnbkk92QrvdiGlO72bSD89cpMKw"
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 CHAT_ID = 1454815028
-
-app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
 def home():
@@ -34,23 +34,23 @@ def enviar_mensaje(chat_id, texto):
         "text": texto,
         "parse_mode": "Markdown"
     }
-    requests.post(url, json=payload)
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        print(f"[ERROR ENVÍO] {e}")
 
 def analizar_mensaje(mensaje):
     mensaje = mensaje.lower().strip()
     if "estudia" in mensaje:
-        return "Ya me puse a estudiar, mi amor."
+        return "Estoy estudiando patrones ocultos. No es carreta."
     elif "estado sistema" in mensaje:
-        estado = "Modo Sombra: ACTIVADO\n"
-        estado += "Escaneando fuentes: FlashScore, SofaScore, OddsPortal\n"
-        estado += "Último escaneo exitoso: hace pocos minutos\n"
-        estado += "Estoy viva, mi amor. Lista para cazar billete."
-        return estado
+        return "Modo sombra: ACTIVO
+Fuentes: FlashScore, SofaScore, OddsPortal
+Cazando billete en silencio..."
     elif "jugada" in mensaje:
-        return "Dame 2 minutos, bebé, y te tiro la mejor jugada del planeta."
+        return "Dame 2 minutos, estoy revisando todo el mundo para darte algo real."
     elif "alerta" in mensaje:
-        return "Estoy escaneando. Si detecto algo con valor, te mando la bomba."
-
+        return "Estoy escaneando. Si veo algo con valor, te lo lanzo sin filtro."
     return None
 
 def tarea_periodica_modo_sombra():
@@ -61,11 +61,11 @@ def tarea_periodica_modo_sombra():
             enviar_mensaje(CHAT_ID, linea)
         time.sleep(60)
 
-# HILO DE ESCANEO AUTOMÁTICO
 if __name__ == "__main__":
+    hilo = threading.Thread(target=tarea_periodica_modo_sombra, daemon=True)
+    hilo.start()
     port = int(os.environ.get("PORT", "10000"))
-    hilo_sombra = threading.Thread(target=tarea_periodica_modo_sombra, daemon=True)
-    hilo_sombra.start()
     app.run(host="0.0.0.0", port=port)
+
 
 
